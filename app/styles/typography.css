@@ -1,0 +1,56 @@
+.nano-heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  line-height: inherit;
+}
+
+.pill-button {
+  border-radius: 9999px;
+  border: 1px solid rgba(0,0,0,0.3);
+  background: white;
+  padding: 5px 10px;
+  font-size: 10px;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, border 0.15s;
+  opacity: 1;
+}
+.pill-button.selected,
+.pill-button:hover {
+  border: 1px solid #000;
+  border-color: #000;
+}
+
+.visit-foundry-btn:hover,
+.visit-foundry-btn:active {
+  background: #000000;
+  color: #ffffff !important;
+  border-color: #000;
+}
+
+.text-button {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: #000;
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+.text-button--inactive {
+  opacity: 0.5;
+}
+.text-button:hover,
+.text-button--active {
+  opacity: 1;
+} 
