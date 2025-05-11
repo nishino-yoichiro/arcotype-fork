@@ -13,8 +13,8 @@ const BlankCard: React.FC<BlankCardProps> = ({ style }) => {
   return (
     <div 
       style={{ 
-        width: '288px',
-        height: '196px',
+        width: '250px',
+        height: '170px',
         backgroundColor: '#F3F4FA',
         borderRadius: '20px',
         padding: '20px',
@@ -60,28 +60,28 @@ const FontCard: React.FC<FontCardProps> = ({
   }, [fontName]);
 
   // Card padding for left/right only
-  const cardPaddingLeft = 40;
-  const cardPaddingRight = 40;
+  const cardPaddingLeft = 30;
+  const cardPaddingRight = 30;
   // Determine if the font name is a single word
   const isSingleWord = fontName.trim().split(' ').length === 1;
   // Font size and top padding rules
   let fontNameFontSize = 32;
-  let cardPaddingTop = 50;
+  let cardPaddingTop = 40;
   if (isSingleWord && isTwoLines) {
-    fontNameFontSize = 28;
-    cardPaddingTop = 50;
+    fontNameFontSize = 24;
+    cardPaddingTop = 40;
   } else if (isTwoLines) {
-    fontNameFontSize = 32;
-    cardPaddingTop = 36;
+    fontNameFontSize = 28;
+    cardPaddingTop = 34;
   }
-  const cardPaddingBottom = 36;
+  const cardPaddingBottom = 32;
 
   return (
     <div
       style={{
         position: 'relative',
-        width: '288px',
-        height: '196px',
+        width: '250px',
+        height: '170px',
         backgroundColor: isActive ? '#FFFFFF' : '#F3F4FA',
         borderRadius: '20px',
         paddingLeft: cardPaddingLeft,
@@ -106,7 +106,7 @@ const FontCard: React.FC<FontCardProps> = ({
           left: cardPaddingLeft,
           right: cardPaddingRight,
           fontSize: `${fontNameFontSize}px`,
-          fontWeight: 500,
+          fontWeight: 400,
           margin: 0,
           lineHeight: 1,
           pointerEvents: 'none',
@@ -125,15 +125,15 @@ const FontCard: React.FC<FontCardProps> = ({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          gap: '3px',
+          gap: '2px',
           pointerEvents: 'none',
         }}
       >
         <p
           style={{
             fontFamily: 'Inter',
-            fontSize: '14px',
-            color: '#111',
+            fontSize: '12px',
+            color: '#000',
             opacity: 1,
             margin: 0,
           }}
@@ -143,9 +143,9 @@ const FontCard: React.FC<FontCardProps> = ({
         <p
           style={{
             fontFamily: 'Inter',
-            fontSize: '14px',
-            color: '#6b7280',
-            opacity: 0.8,
+            fontSize: '12px',
+            color: '#000',
+            opacity: 0.6,
             margin: 0,
           }}
         >
@@ -171,6 +171,50 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
   const [gridPos, setGridPos] = useState<{ x: number; y: number }>({ x: -870, y: -1050 });
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
+  // --- Two-finger panning state ---
+  const lastTouch = useRef<{ x: number; y: number } | null>(null);
+  const lastTouches = useRef<TouchList | null>(null);
+  const [isPanning, setIsPanning] = useState(false);
+
+  // Touch event handlers for two-finger panning
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      setIsPanning(true);
+      lastTouches.current = e.touches;
+    }
+  };
+  const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isPanning && e.touches.length === 2 && lastTouches.current) {
+      const prevArr = [];
+      const currArr = [];
+      for (let i = 0; i < 2; i++) {
+        prevArr.push(lastTouches.current[i]);
+        currArr.push(e.touches[i]);
+      }
+      if (prevArr.length === 2 && currArr.length === 2) {
+        const dx = ((currArr[0].clientX + currArr[1].clientX) - (prevArr[0].clientX + prevArr[1].clientX)) / 2;
+        const dy = ((currArr[0].clientY + currArr[1].clientY) - (prevArr[0].clientY + prevArr[1].clientY)) / 2;
+        setGridPos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
+      }
+      lastTouches.current = e.touches;
+    }
+  };
+  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length < 2) {
+      setIsPanning(false);
+      lastTouches.current = null;
+    }
+  };
+
+  // Wheel event handler for trackpad two-finger panning
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.ctrlKey || e.metaKey) return; // ignore pinch-zoom
+    if (e.deltaX !== 0 || e.deltaY !== 0) {
+      setGridPos(pos => ({ x: pos.x - e.deltaX, y: pos.y - e.deltaY }));
+      e.preventDefault();
+    }
+  };
+
   const renderGrid = () => {
     const grid = [];
     
@@ -182,7 +226,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${i + 1}`,
             gridRow: '1',
-            width: '288px',
+            width: '250px',
             transform: 'translateX(154px)',
             display: 'block'
           }}
@@ -198,7 +242,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '1',
-          width: '288px',
+          width: '250px',
           transform: 'translateX(154px)',
           display: 'block'
         }}
@@ -228,7 +272,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '2',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -247,7 +291,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '2',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -268,7 +312,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `${row2FontsFiltered.length + 2}`,
           gridRow: '2',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -283,7 +327,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '2',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -297,7 +341,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '2',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -326,7 +370,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '3',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -346,7 +390,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '3',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -368,7 +412,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '3',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -383,7 +427,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '3',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -413,7 +457,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '4',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -432,7 +476,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '4',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -453,7 +497,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '4',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -467,7 +511,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '4',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -496,7 +540,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '5',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -516,7 +560,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '5',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -538,7 +582,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '5',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -553,7 +597,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '5',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -589,7 +633,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '6',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -608,7 +652,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '6',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -630,7 +674,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${i + 7}`,
             gridRow: '6',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -645,7 +689,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '6',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -674,7 +718,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '7',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -693,7 +737,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '7',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -715,7 +759,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '7',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -730,7 +774,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '7',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -764,7 +808,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '8',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -782,7 +826,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '8',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -821,7 +865,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '9',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -840,7 +884,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '9',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -865,7 +909,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '9',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -895,7 +939,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${i + 1}`,
             gridRow: '10',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -914,7 +958,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 3}`,
             gridRow: '10',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -938,7 +982,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '10',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -953,7 +997,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '10',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -982,7 +1026,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${i + 1}`,
             gridRow: '11',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -1002,7 +1046,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 3}`,
             gridRow: '11',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -1027,7 +1071,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '11',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1043,7 +1087,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '11',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1076,7 +1120,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '12',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -1094,7 +1138,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '12',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -1115,7 +1159,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `7`,
           gridRow: '12',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -1132,7 +1176,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `8`,
             gridRow: '12',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -1153,7 +1197,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '12',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -1167,7 +1211,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '12',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -1195,7 +1239,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `1`,
           gridRow: '13',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1214,7 +1258,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${index + 2}`,
             gridRow: '13',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -1236,7 +1280,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{ 
           gridColumn: `7`,
           gridRow: '13',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1255,7 +1299,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `8`,
             gridRow: '13',
-            width: '288px',
+            width: '250px',
             display: 'block',
             transform: 'translateX(154px)'
           }}
@@ -1277,7 +1321,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `9`,
           gridRow: '13',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1292,7 +1336,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '13',
-          width: '288px',
+          width: '250px',
           display: 'block',
           transform: 'translateX(154px)'
         }}
@@ -1309,7 +1353,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           style={{
             gridColumn: `${i + 1}`,
             gridRow: '14',
-            width: '288px',
+            width: '250px',
             display: 'block'
           }}
         >
@@ -1324,7 +1368,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
         style={{
           gridColumn: `10`,
           gridRow: '14',
-          width: '288px',
+          width: '250px',
           display: 'block'
         }}
       >
@@ -1351,30 +1395,32 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
   }, [centeredFontId]);
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto', height: '100%' }} ref={gridContainerRef}>
+    <div
+      style={{ width: '100%', overflow: 'hidden', height: '100%', touchAction: 'none' }}
+      ref={gridContainerRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onWheel={onWheel}
+    >
       <motion.div
-        drag
-        dragConstraints={{
-          left: -2000,
-          right: 0,
-          top: -2000,
-          bottom: 0
-        }}
         animate={gridPos}
         transition={{
           type: 'spring',
-          stiffness: 100,
-          damping: 20,
+          stiffness: 200,
+          damping: 40,
           mass: 1,
-          duration: 0.8
+          duration: 0.8,
+          restDelta: 0.8
         }}
         style={{ 
           display: 'grid',
-          gridTemplateColumns: 'repeat(9, 288px)',
-          gridTemplateRows: 'repeat(14, 196px)',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fill, 250px)',
+          gridTemplateRows: 'repeat(14, 170px)',
+          gap: '16px',
           padding: 0,
           width: 'max-content',
+          willChange: 'transform',
         }}
       >
         {renderGrid()}

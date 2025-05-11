@@ -69,7 +69,12 @@ import {
   Langar,
   Diplomata_SC,
   Alike,
-  Alike_Angular
+  Alike_Angular,
+  Elsie,
+  Elsie_Swash_Caps,
+  Almendra,
+  Luxurious_Roman,
+  Kotta_One
 } from 'next/font/google';
 
 // Monospace fonts configuration
@@ -396,6 +401,31 @@ export const alikeAngular = Alike_Angular({
   weight: '400'
 });
 
+export const elsie = Elsie({
+  subsets: ['latin'],
+  weight: ['400', '900']
+});
+
+export const elsieSwashCaps = Elsie_Swash_Caps({
+  subsets: ['latin'],
+  weight: ['400', '900']
+});
+
+export const almendra = Almendra({
+  subsets: ['latin'],
+  weight: ['400', '700']
+});
+
+export const luxuriousRoman = Luxurious_Roman({
+  subsets: ['latin'],
+  weight: '400'
+});
+
+export const kottaOne = Kotta_One({
+  subsets: ['latin'],
+  weight: '400'
+});
+
 // Map font names to their configurations
 export const fontConfigs: { [key: string]: NextFont } = {
   // Monospace fonts
@@ -470,5 +500,10 @@ export const fontConfigs: { [key: string]: NextFont } = {
   'Langar': langar,
   'Diplomata SC': diplomataSc,
   'Alike': alike,
-  'Alike Angular': alikeAngular
+  'Alike Angular': alikeAngular,
+  'Elsie': elsie,
+  'Elsie Swash Caps': elsieSwashCaps,
+  'Almendra': almendra,
+  'Luxurious Roman': luxuriousRoman,
+  'Kotta One': kottaOne
 }; 

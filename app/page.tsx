@@ -81,7 +81,7 @@ export default function Home() {
   // Define the h6/Nano Heading style
   const nanoHeadingStyle = {
     fontFamily: 'Inter, sans-serif',
-    fontSize: '12px',
+    fontSize: '10px',
     color: '#000000',
     fontWeight: 400,
   };
@@ -152,7 +152,7 @@ export default function Home() {
     border: '1px solid rgba(0,0,0,0.3)',
     background: 'white',
     padding: '2px 18px', // less vertical padding
-    fontSize: '14px',
+    fontSize: '10px',
     color: '#000',
     fontWeight: 400,
     fontFamily: 'Inter, sans-serif',
@@ -195,12 +195,17 @@ export default function Home() {
         flexShrink: 0
       }} id="sidebar-scroll">
         <div style={{ position: 'sticky', top: 0, zIndex: 1, background: 'white', borderBottom: '1px solid #e5e7eb' }}>
-          <div style={{ padding: '1rem 1rem 0.5rem 1rem' }}>
-            <h2 style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>Similar Results</h2>
+          <div style={{ padding: '1rem 1rem 1rem 24px' }}>
+            <h2 className="heading-2">Similar Results</h2>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button style={{ fontWeight: selectedTab === 'Popular' ? '500' : 'normal', color: selectedTab === 'Popular' ? '#111' : '#6b7280' }} onClick={() => setSelectedTab('Popular')}>Popular</button>
               <button style={{ fontWeight: selectedTab === 'New' ? '500' : 'normal', color: selectedTab === 'New' ? '#111' : '#6b7280' }} onClick={() => setSelectedTab('New')}>New</button>
-              <button style={{ fontWeight: selectedTab === 'AZ' ? '500' : 'normal', color: selectedTab === 'AZ' ? '#111' : '#6b7280' }} onClick={() => setSelectedTab('AZ')}>AZ</button>
+              <button
+                style={{ fontWeight: selectedTab === 'AZ' ? '500' : 'normal', color: selectedTab === 'AZ' ? '#111' : '#6b7280' }}
+                onClick={() => setSelectedTab('AZ')}
+              >
+                AZ
+              </button>
             </div>
           </div>
         </div>
@@ -224,7 +229,7 @@ export default function Home() {
                 onMouseEnter={() => setHoveredFontId(font.id)}
                 onMouseLeave={() => setHoveredFontId(null)}
               >
-                <div style={{ marginLeft: '26px', marginRight: '26px', padding: '0px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 0 }}>
+                <div style={{ marginLeft: '24px', marginRight: '24px', padding: '0px 0', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 0 }}>
                   <span
                     className={fontConfig?.className}
                     style={{
@@ -241,12 +246,12 @@ export default function Home() {
                   <span
                     style={{
                       fontFamily: 'Inter',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       fontWeight: 450,
-                      color: '#111',
+                      color: '#000',
                       opacity: 1,
                       margin: 0,
-                      marginBottom: '2px',
+                      marginBottom: '2.5px',
                     }}
                   >
                     {font.name}
@@ -254,10 +259,10 @@ export default function Home() {
                   <span
                     style={{
                       fontFamily: 'Inter',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       fontWeight: 450,
-                      color: '#6b7280',
-                      opacity: 0.8,
+                      color: '#000',
+                      opacity: 0.6,
                       margin: 0,
                     }}
                   >
@@ -340,14 +345,13 @@ export default function Home() {
         <div style={{ 
           position: 'fixed',
           left: '330px',
-          top: '50%',
+          top: '400px',
           transform: 'translateY(-50%)',
-          width: '377px',
-          minHeight: '555px',
-          height: '555px',
+          width: '360px',
+          minHeight: '520px',
+          height: '520px',
           backgroundColor: 'white',
-          boxShadow: '-4px 0 15px rgba(0, 0, 0, 0.1)',
-          borderLeft: '1px solid #e5e7eb',
+          boxShadow: '-4px 18px 15px rgba(0, 0, 0, 0.1)',
           padding: '2rem',
           overflow: 'auto',
           borderRadius: '24px',
@@ -377,24 +381,24 @@ export default function Home() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
               {/* Download and Save buttons */}
               <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '0.4rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px' }}
+                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '0.4rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px' }}
                 aria-label="Download Trial"
               >
-                <img src="/DownloadTrial.svg" alt="Download Trial" style={{ width: '20px', height: '20px', display: 'block' }} />
+                <img src="/DownloadTrial.svg" alt="Download Trial" style={{ width: '16px', height: '16px', display: 'block' }} />
               </button>
               <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '0.4rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px' }}
+                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '1rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px' }}
                 aria-label="Save"
               >
-                <img src="/Save.svg" alt="Save" style={{ width: '20px', height: '20px', display: 'block' }} />
+                <img src="/Save.svg" alt="Save" style={{ width: '16px', height: '16px', display: 'block' }} />
               </button>
               {/* Close button using Close.svg */}
               <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '0.75rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px' }}
+                style={{ border: 'none', background: 'none', cursor: 'pointer', marginLeft: '1.2rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px' }}
                 onClick={() => selectFont(null)}
                 aria-label="Close"
               >
-                <img src="/Close.svg" alt="Close" style={{ width: '32px', height: '32px', display: 'block' }} />
+                <img src="/Close.svg" alt="Close" style={{ width: '28px', height: '28px', display: 'block' }} />
               </button>
             </div>
           </div>
@@ -433,8 +437,8 @@ export default function Home() {
                   right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  width: '16px',
-                  height: '16px',
+                  width: '12px',
+                  height: '12px',
                   pointerEvents: 'none',
                 }}
               />
@@ -443,14 +447,14 @@ export default function Home() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
               <span style={{
                 borderRadius: '9999px',
-                border: '1px solid #000000',
+                border: '0.75px solid #000000',
                 background: '#ffffff',
-                fontSize: '11px',
+                fontSize: '10px',
                 color: '#000000',
                 padding: '2px 0px',
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 400,
-                minWidth: '32px',
+                minWidth: '28px',
                 textAlign: 'center',
                 display: 'inline-block',
               }}>{testerSize}</span>
@@ -497,11 +501,11 @@ export default function Home() {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center', 
-            marginTop: '0.75rem',
-            marginBottom: '2rem',
+            marginTop: '0.25rem',
+            marginBottom: '1.5rem',
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span style={{ ...nanoHeadingStyle, marginBottom: '6px' }}>
+              <span style={{ ...nanoHeadingStyle, marginBottom: '4px' }}>
                 {fonts.find(f => f.id === selectedFontId)?.name}
               </span>
               <span style={{ ...nanoHeadingStyle, opacity: 0.6 }}>
@@ -513,28 +517,13 @@ export default function Home() {
               href={`https://fonts.google.com/specimen/${encodeURIComponent(fonts.find(f => f.id === selectedFontId)?.name || '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="visit-foundry-btn"
-              style={{
-                borderRadius: '8px',
-                border: '1.5px solid #111',
-                padding: '0.6rem 0.75rem',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '12px',
-                color: '#000000',
-                fontWeight: 400,
-                textDecoration: 'none',
-                transition: 'background 0.2s, color 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-              }}
+              className="button-rounded"
             >
               Visit Foundry
             </a>
           </div>
           {/* Use Cases / Pair this font tab buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.9rem', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.8rem', position: 'relative' }}>
             <button
               className="text-button text-button--active"
               style={{ marginRight: '1rem' }}
@@ -555,7 +544,7 @@ export default function Home() {
                 display: 'flex',
                 overflowX: 'auto',
                 gap: '14px',
-                paddingBottom: '1.5rem',
+                paddingBottom: '1.4rem',
                 scrollbarWidth: 'auto',
                 msOverflowStyle: 'auto',
               }}>
@@ -581,7 +570,7 @@ export default function Home() {
                     <span
                       className="nano-heading"
                       style={{
-                        fontSize: '12px',
+                        fontSize: '10px',
                         opacity: hoveredIndex === i ? 1 : 0.6,
                         marginTop: '4px',
                         textAlign: 'left',
