@@ -840,6 +840,21 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
       );
     });
 
+    // Add BlankCard after Chonburi (last font in row 8)
+    grid.push(
+      <div
+        key={`blank-row8-after-chonburi`}
+        style={{
+          gridColumn: `${row8Fonts.length + 2}`,
+          gridRow: '8',
+          width: '250px',
+          display: 'block'
+        }}
+      >
+        <BlankCard />
+      </div>
+    );
+
     // Add these fonts to usedFontNames
     row8FontNames.forEach(name => usedFontNames.add(name));
 

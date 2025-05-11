@@ -74,7 +74,8 @@ import {
   Elsie_Swash_Caps,
   Almendra,
   Luxurious_Roman,
-  Kotta_One
+  Kotta_One,
+  Diplomata
 } from 'next/font/google';
 
 // Monospace fonts configuration
@@ -426,6 +427,11 @@ export const kottaOne = Kotta_One({
   weight: '400'
 });
 
+export const diplomata = Diplomata({
+  subsets: ['latin'],
+  weight: '400'
+});
+
 // Map font names to their configurations
 export const fontConfigs: { [key: string]: NextFont } = {
   // Monospace fonts
@@ -505,5 +511,6 @@ export const fontConfigs: { [key: string]: NextFont } = {
   'Elsie Swash Caps': elsieSwashCaps,
   'Almendra': almendra,
   'Luxurious Roman': luxuriousRoman,
-  'Kotta One': kottaOne
+  'Kotta One': kottaOne,
+  'Diplomata': diplomata
 }; 
