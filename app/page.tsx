@@ -177,12 +177,29 @@ export default function Home() {
   const [testerWeight, setTesterWeight] = useState('400');
   const [testerSize, setTesterSize] = useState(36);
   const [testerText, setTesterText] = useState('');
+  const [testerTextTop, setTesterTextTop] = useState('');
 
   const selectedFont = fonts.find(f => f.id === selectedFontId);
   const availableWeights = selectedFont?.weights || ['400'];
 
   const [weightDropdownOpen, setWeightDropdownOpen] = useState(false);
   const [weightDropdownPressed, setWeightDropdownPressed] = useState(false);
+
+  // Add state for popup and selected category
+  const [searchPopupOpen, setSearchPopupOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('Serif');
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+
+  const categoryIcon = (cat: string | null) => {
+    switch (cat) {
+      case 'Sans Serif': return '/sans-serif.svg';
+      case 'Serif': return '/serif.svg';
+      case 'Display': return '/display.svg';
+      case 'Script': return '/script.svg';
+      case 'Gothic': return '/gothic.svg';
+      default: return '';
+    }
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
@@ -294,36 +311,188 @@ export default function Home() {
           zIndex: 10 
         }}>
           <div style={{ 
-            maxWidth: '36rem', 
-            margin: '0 auto', 
-            display: 'flex', 
-            alignItems: 'center', 
-            backgroundColor: '#f3f4f6', 
-            borderRadius: '9999px', 
-            padding: '0.5rem 1rem' 
+            maxWidth: '100%',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}>
-            <input 
-              type="text" 
-              placeholder="serif fonts" 
-              style={{ 
-                flex: 1, 
-                backgroundColor: 'transparent', 
-                outline: 'none' 
-              }}
-            />
-            <button style={{ marginLeft: '0.5rem', color: '#6b7280' }}>×</button>
+            {/* Search bar */}
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', zIndex: 10 }}>
+              <div
+                className={`search-bar-container${searchPopupOpen ? ' expanded' : ''}`}
+              >
+                <div className="filter-tag-button">
+                  <img
+                    src={selectedCategory === 'Serif' ? '/serif-fill.svg' : categoryIcon(selectedCategory) || ''}
+                    alt={selectedCategory || undefined}
+                    style={{ width: 22, height: 22, objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => setSearchPopupOpen(true)}
+                  />
+                  <span
+                    style={{ fontSize: '10px', fontWeight: 400, cursor: 'pointer' }}
+                    onClick={() => setSearchPopupOpen(true)}
+                  >
+                    {selectedCategory}
+                  </span>
+                  <span className="filter-tag-close">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSelectedCategory(null);
+                      }}
+                      style={{
+                        border: 'none',
+                        background: 'none',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                      }}
+                      aria-label="Remove category"
+                    >
+                      <img src="/black-close-small.svg" alt="Remove" style={{ width: 16, height: 16 }} />
+                    </button>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  onFocus={() => setSearchPopupOpen(true)}
+                  onBlur={() => setTimeout(() => setSearchPopupOpen(false), 150)}
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'transparent',
+                    outline: 'none',
+                    border: 'none',
+                    fontSize: '12px',
+                    color: '#000',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 400,
+                    padding: 0,
+                  }}
+                />
+              </div>
+              {/* Popup */}
+              <div
+                className={`search-popup${searchPopupOpen ? ' expanded' : ''}`}
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 20,
+                }}
+              >
+                <div
+                  style={{
+                    background: '#EEEFF4',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                    padding: '22px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    height: 'auto',
+                  }}
+                  tabIndex={-1}
+                  onMouseDown={e => e.preventDefault()}
+                >
+                  <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif', fontSize: 14,}}>Recents</div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                    {['most used fonts', 'logo font', 'minimal font', 'modern sans serif'].map(recent => (
+                      <button
+                        key={recent}
+                        className="search-category-button-pill"
+                      >
+                        <img src="magnifying-glass.svg" style={{ width: 10, height: 10 }} /> {recent}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif',fontSize: 14, margin: '0 0 0px 0' }}>Categories</div>
+                  <div style={{ display: 'flex', gap: '6px', marginBottom: '16px', flexWrap: 'nowrap' }}>
+                    {[
+                      { label: 'Sans Serif', icon: '/sans-serif.svg' },
+                      { label: 'Serif', icon: '/serif.svg' },
+                      { label: 'Display', icon: '/display.svg' },
+                      { label: 'Script', icon: '/script.svg' },
+                      { label: 'Gothic', icon: '/gothic.svg' },
+                    ].map(cat => (
+                      <button
+                        key={cat.label}
+                        onClick={() => setSelectedCategory(cat.label)}
+                        className={`search-category-button${selectedCategory === cat.label ? ' selected' : ''}`}
+                      >
+                        <img src={cat.icon} alt={cat.label} style={{ width: 28, height: 28, objectFit: 'contain' }} /> {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif', fontSize: 14, margin: '0 0 0px 0' }}>Vibes</div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '0px' }}>
+                    {['modern', 'geometric', 'bold', 'minimal', 'vintage'].map(vibe => (
+                      <button
+                        key={vibe}
+                        className="search-category-button-pill"
+                      >
+                        <img src="/arrow-small-black.svg" alt="arrow" style={{ width: 10, height: 10 }} /> {vibe}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div style={{ 
-            maxWidth: '36rem', 
-            margin: '0.5rem auto 0', 
-            display: 'flex', 
-            gap: '1rem' 
+            margin: '0.5rem 0 0 0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem'
           }}>
             <button style={{ fontSize: '0.875rem', fontWeight: '500' }}>Appearance</button>
             <button style={{ fontSize: '0.875rem', fontWeight: '500' }}>Use Case</button>
             <button style={{ fontSize: '0.875rem', fontWeight: '500' }}>Price</button>
             <button style={{ fontSize: '0.875rem', fontWeight: '500' }}>Vibe</button>
+            {/* Type tester input with icon */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                borderBottom: '1px solid #BBBCC0',
+                minWidth: '278px',
+                width: 'fit-content',
+                paddingBottom: '2px',
+              }}
+            >
+              <img
+                src="/type-test.svg"
+                alt="Type Tester"
+                style={{ width: '24px', height: '24px', marginRight: '0px', marginBottom: '0px' }}
+              />
+              <input
+                type="text"
+                value={testerTextTop}
+                onChange={e => setTesterTextTop(e.target.value)}
+                placeholder="Type here..."
+                className="type-tester-input"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: 0,
+                  padding: '0rem 1.2rem 0rem 0.35rem',
+                  minWidth: '250px',
+                  minHeight: '32px',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '12px',
+                  color: '#000',
+                  fontWeight: 400,
+                  outline: 'none',
+                  textAlign: 'left',
+                  boxShadow: 'none',
+                }}
+              />
+            </div>
           </div>
         </div>
         
@@ -336,6 +505,7 @@ export default function Home() {
             selectedFontId={selectedFontId}
             onSelectFont={selectFont}
             centeredFontId={selectedFontId}
+            testerTextTop={testerTextTop}
           />
         </div>
       </div>
@@ -349,7 +519,7 @@ export default function Home() {
           transform: 'translateY(-50%)',
           width: '360px',
           minHeight: '520px',
-          height: '520px',
+          height: '550px',
           backgroundColor: 'white',
           boxShadow: '-4px 18px 15px rgba(0, 0, 0, 0.1)',
           padding: '2rem',

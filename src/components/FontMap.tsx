@@ -31,13 +31,15 @@ interface FontCardProps {
   foundry: string;
   isSelected: boolean;
   onClick: () => void;
+  testerTextTop?: string;
 }
 
 const FontCard: React.FC<FontCardProps> = ({ 
   fontName, 
   foundry, 
   isSelected, 
-  onClick 
+  onClick,
+  testerTextTop
 }) => {
   const fontConfig = fontConfigs[fontName];
   const [hovered, setHovered] = useState(false);
@@ -113,7 +115,7 @@ const FontCard: React.FC<FontCardProps> = ({
           wordBreak: 'break-word',
         }}
       >
-        {fontName}
+        {testerTextTop ? testerTextTop : fontName}
       </h3>
       {/* Bottom area: small font name and foundry, stacked, 4px gap, 30px from bottom */}
       <div
@@ -160,9 +162,10 @@ interface FontMapProps {
   selectedFontId: string | null;
   onSelectFont: (fontId: string) => void;
   centeredFontId?: string | null;
+  testerTextTop?: string;
 }
 
-const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centeredFontId }) => {
+const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centeredFontId, testerTextTop }) => {
   const { fonts } = useFontStore();
 
   // For autoscroll: refs for each FontCard
@@ -300,6 +303,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -400,6 +404,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -485,6 +490,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -570,6 +576,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -661,6 +668,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -747,6 +755,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -835,6 +844,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -909,6 +919,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -982,6 +993,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -1071,6 +1083,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -1162,6 +1175,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -1200,6 +1214,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={diplomataFont.designer}
             isSelected={selectedFontId === diplomataFont.id}
             onClick={() => onSelectFont(diplomataFont.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -1283,6 +1298,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={font.designer}
             isSelected={selectedFontId === font.id}
             onClick={() => onSelectFont(font.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
@@ -1324,6 +1340,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
             foundry={diplomataSCFont.designer}
             isSelected={selectedFontId === diplomataSCFont.id}
             onClick={() => onSelectFont(diplomataSCFont.id)}
+            testerTextTop={testerTextTop}
           />
         </div>
       );
