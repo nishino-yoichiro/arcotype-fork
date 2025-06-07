@@ -4,10 +4,12 @@ import useFontStore from '@/src/store/useFontStore';
 import FontMap from '../src/components/FontMap';
 import { fontConfigs } from '@/src/lib/fontConfig';
 import './styles/typography.css';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { fonts, selectedFontId, selectFont } = useFontStore();
+  const router = useRouter();
 
   const popularOrder = [
     "Playfair Display", "Merriweather", "Lora", "Roboto Serif", "Bitter", "Libre Baskerville", "Linden Hill",
@@ -481,6 +483,9 @@ export default function Home() {
                       <button
                         key={recent}
                         className="search-category-button-pill"
+                        onClick={() => {
+                          if (recent === 'most used fonts') router.push('/most-used-fonts');
+                        }}
                       >
                         <img src="magnifying-glass.svg" style={{ width: 10, height: 10 }} /> {recent}
                       </button>
