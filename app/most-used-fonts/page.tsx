@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useFontStore from '@/src/store/useFontStore';
 import MostUsedFontMap from '../../src/components/MostUsedFontMap';
-import { fontConfigs } from '@/src/lib/fontConfig';
+import { fontConfigs } from '../../src/lib/fontConfig';
 import '../styles/typography.css';
 import Link from 'next/link';
 import { mostusedPopularOrder, mostusedAZOrder, mostusedNewestOrder } from '../../src/data/fontOrders';
