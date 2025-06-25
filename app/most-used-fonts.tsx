@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useFontStore from '@/src/store/useFontStore';
 import FontMap from '../src/components/FontMap';
-import { fontConfigs } from '@/src/lib/fontConfig';
+import { fontConfigs } from '../src/lib/fontConfig';
 import './styles/typography.css';
 
 export default function MostUsedFontsPage() {

@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useFontStore from '@/src/store/useFontStore';
 import FontMap from '../src/components/FontMap';
-import { fontConfigs } from '@/src/lib/fontConfig';
+import { fontConfigs } from '../src/lib/fontConfig';
 import './styles/typography.css';
 import Link from 'next/link';
 import { serifPopularOrder, serifNewestOrder, serifAZOrder } from '@/src/data/fontOrders';
@@ -164,33 +164,16 @@ export default function Home() {
   const selectedFont = fonts.find(f => f.id === selectedFontId);
   const availableWeights = selectedFont?.weights || ['400'];
 
-  const [weightDropdownOpen, setWeightDropdownOpen] = useState(false);
-  const [weightDropdownPressed, setWeightDropdownPressed] = useState(false);
-
   // Add state for popup and selected category
   const [searchPopupOpen, setSearchPopupOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>('Serif');
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-
-  // State for hover effect on 'Serif' button
-  const [serifHover, setSerifHover] = useState(false);
-
-  // State for hover effect on 'most used fonts' button
-  const [mostUsedHover, setMostUsedHover] = useState(false);
-
-  const categoryIcon = (cat: string | null) => {
-    switch (cat) {
-      case 'Sans Serif': return '/sans-serif.svg';
-      case 'Serif': return '/serif.svg';
-      case 'Display': return '/display.svg';
-      case 'Script': return '/script.svg';
-      case 'Gothic': return '/gothic.svg';
-      default: return '';
-    }
-  };
 
   // Add gridPos and setGridPos state for FontMap panning
   const [gridPos, setGridPos] = useState<{ x: number; y: number }>({ x: -1030, y: -1440 });
+
+  // Add state for hover effect on 'most used fonts' and 'Serif' buttons
+  const [mostUsedHover, setMostUsedHover] = useState(false);
+  const [serifHover, setSerifHover] = useState(false);
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
@@ -394,7 +377,7 @@ export default function Home() {
               {selectedCategory && (
                 <div className="filter-tag-button">
                   <img
-                    src={selectedCategory === 'Serif' ? '/serif-fill.svg' : categoryIcon(selectedCategory) || ''}
+                    src={selectedCategory === 'Serif' ? '/serif-fill.svg' : '/serif.svg'}
                     alt={selectedCategory || undefined}
                     style={{ width: 22, height: 22, objectFit: 'contain', cursor: 'pointer' }}
                     onClick={() => setSearchPopupOpen(true)}
@@ -776,28 +759,11 @@ export default function Home() {
                   outline: 'none',
                   minWidth: '90px',
                 }}
-                onFocus={() => setWeightDropdownOpen(true)}
-                onBlur={() => { setWeightDropdownOpen(false); setWeightDropdownPressed(false); }}
-                onMouseDown={() => setWeightDropdownPressed(true)}
-                onMouseUp={() => setWeightDropdownPressed(false)}
               >
                 {availableWeights.map(w => (
                   <option key={w} value={w} style={{ fontWeight: w }}>{weightNames[w] || w}</option>
                 ))}
               </select>
-              <img
-                src={weightDropdownPressed ? '/Dropdown-up.svg' : '/Dropdown.svg'}
-                alt="Dropdown"
-                style={{
-                  position: 'absolute',
-                  right: '8px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '12px',
-                  height: '12px',
-                  pointerEvents: 'none',
-                }}
-              />
             </div>
             {/* Font size pill and slider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
