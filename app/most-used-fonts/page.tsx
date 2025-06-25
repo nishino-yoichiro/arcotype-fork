@@ -6,7 +6,7 @@ import { fontConfigs } from '@/src/lib/fontConfig';
 import '../styles/typography.css';
 import Link from 'next/link';
 import { mostusedPopularOrder, mostusedAZOrder, mostusedNewestOrder } from '../../src/data/fontOrders';
-import { supabase } from '../../src/lib/supabase';
+import { supabase } from '../../src/lib/supabase.js';
 
 export default function MostUsedFontsPage() {
   const { fonts } = useFontStore();
