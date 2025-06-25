@@ -134,16 +134,19 @@
   cursor: pointer;
   transition: background 0.2s, color 0.15s;
   white-space: nowrap;
+  text-decoration: none !important;
 }
 .search-category-button-pill.selected {
   background: #fff;
   border: none;
 }
 .search-category-button-pill:hover,
-.search-category-button-pill:focus {
+.search-category-button-pill:focus,
+.search-category-button-pill:active {
   background: #fff;
   color: #000;
   border: none;
+  text-decoration: none !important;
 }
 
 .filter-tag-button {
@@ -255,4 +258,49 @@
 .sort-button:hover,
 .sort-button:focus {
   opacity: 1;
+}
+
+.pill-map-btn,
+.pill-map-btn:hover,
+.pill-map-btn:active,
+.pill-map-btn.selected {
+  border: none;
+  padding: 8px 12px;
+  box-shadow: none;
+}
+
+.pill-map-btn {
+  color: #fff !important;
+  background: #B3AFA4;
+  opacity: 0.9;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  transition: background 0.25s, color 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+}
+.pill-map-btn:hover,
+.pill-map-btn:active,
+.pill-map-btn.selected {
+  background: #000 !important;
+  color: #fff !important;
+  opacity: 1;
+}
+
+a .search-category-button-pill,
+a:visited .search-category-button-pill,
+a:active .search-category-button-pill,
+a:hover .search-category-button-pill {
+  text-decoration: none !important;
+}
+a,
+a:visited,
+a:active,
+a:hover {
+  text-decoration: none !important;
 } 
