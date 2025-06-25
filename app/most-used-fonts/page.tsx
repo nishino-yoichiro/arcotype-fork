@@ -78,7 +78,6 @@ export default function MostUsedFontsPage() {
   // Add state for popup and selected category (copied from page.tsx)
   const [searchPopupOpen, setSearchPopupOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>('most used fonts');
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [testerTextTop, setTesterTextTop] = useState('');
   const categoryIcon = (cat: string | null) => {
     switch (cat) {
