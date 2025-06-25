@@ -121,8 +121,6 @@ export default function MostUsedFontsPage() {
   const [testerText, setTesterText] = useState('');
   const selectedFont = fonts.find(f => f.id === selectedFontId);
   const availableWeights = selectedFont?.weights || ['400'];
-  const [weightDropdownOpen, setWeightDropdownOpen] = useState(false);
-  const [weightDropdownPressed, setWeightDropdownPressed] = useState(false);
 
   // State for hover effect on 'most used fonts' button
   const [mostUsedHover, setMostUsedHover] = useState(false);
@@ -777,28 +775,11 @@ export default function MostUsedFontsPage() {
                     outline: 'none',
                     minWidth: '90px',
                   }}
-                  onFocus={() => setWeightDropdownOpen(true)}
-                  onBlur={() => { setWeightDropdownOpen(false); setWeightDropdownPressed(false); }}
-                  onMouseDown={() => setWeightDropdownPressed(true)}
-                  onMouseUp={() => setWeightDropdownPressed(false)}
                 >
                   {availableWeights.map(w => (
                     <option key={w} value={w} style={{ fontWeight: w }}>{weightNames[w] || w}</option>
                   ))}
                 </select>
-                <img
-                  src={weightDropdownPressed ? '/Dropdown-up.svg' : '/Dropdown.svg'}
-                  alt="Dropdown"
-                  style={{
-                    position: 'absolute',
-                    right: '8px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '12px',
-                    height: '12px',
-                    pointerEvents: 'none',
-                  }}
-                />
               </div>
               {/* Font size pill and slider */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
