@@ -6,6 +6,7 @@ import { fontConfigs } from '@/src/lib/fontConfig';
 import '../styles/typography.css';
 import Link from 'next/link';
 import { mostusedPopularOrder, mostusedAZOrder, mostusedNewestOrder } from '../../src/data/fontOrders';
+import { supabase } from '@/src/lib/supabase';
 
 export default function MostUsedFontsPage() {
   const { fonts } = useFontStore();
@@ -129,55 +130,48 @@ export default function MostUsedFontsPage() {
   // State for hover effect on 'Serif' button
   const [serifHover, setSerifHover] = useState(false);
 
+  // State for Supabase use case images
+  const [supabaseImages, setSupabaseImages] = useState<{ image_url: string; use_case_url: string }[]>([]);
+
+  // Add state for hovered index
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   // 2. Unified handler for selecting a font (from map or sidebar)
   function handleFontSelect(fontId: string | null) {
+    console.log('handleFontSelect called with', fontId);
     setSelectedFontId(fontId);
     setCenteredFontId(fontId);
   }
 
-  // Use case images logic (copied from page.tsx)
-  const imageExts = ['jpeg', 'jpg', 'png', 'webp'];
-  const getFontImages = (fontName: string): string[] => {
-    const safeName = fontName.replace(/ /g, '').toLowerCase();
-    const folderName = fontName;
-    return [1, 2, 3].map(i =>
-      imageExts.map(ext => `/FontsInUse_Images/${folderName}/${safeName}${i}.${ext}`)
-    ).flat();
-  };
-  interface UseCaseImage {
-    src: string;
-    link: string;
-    label: string;
-  }
-  const [validImages, setValidImages] = useState<UseCaseImage[]>([]);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // Fetch images from Supabase when selectedFontId changes
   useEffect(() => {
+    console.log('useEffect triggered', { selectedFontId });
     if (!selectedFontId) {
-      setValidImages([]);
+      setSupabaseImages([]);
       return;
     }
     const fontName = fonts.find(f => f.id === selectedFontId)?.name;
+    console.log('fontName:', fontName);
     if (!fontName) {
-      setValidImages([]);
+      setSupabaseImages([]);
       return;
     }
-    const candidates = getFontImages(fontName);
-    let found: UseCaseImage[] = [];
-    let checked = 0;
-    candidates.forEach(src => {
-      const img = new window.Image();
-      img.onload = () => {
-        found.push({ src, link: 'https://fontsinuse.com/', label: 'Fonts in Use' });
-        checked++;
-        if (checked === candidates.length) setValidImages(found.slice(0, 3));
-      };
-      img.onerror = () => {
-        checked++;
-        if (checked === candidates.length) setValidImages(found.slice(0, 3));
-      };
-      img.src = src;
-    });
+    supabase
+      .from('font_images')
+      .select('image_url, use_case_url')
+      .eq('font_name', fontName)
+      .limit(3)
+      .then(({ data, error }) => {
+        console.log('Supabase images:', { data, error, fontName });
+        if (error) {
+          setSupabaseImages([]);
+          return;
+        }
+        setSupabaseImages(data || []);
+      });
   }, [selectedFontId, fonts]);
+
+  console.log('selectedFontId:', selectedFontId);
 
   // Sidebar JSX (now sticky header and sort bar)
   const sidebar = (
@@ -900,9 +894,9 @@ export default function MostUsedFontsPage() {
               </button>
               <div style={{ position: 'absolute', left: 0, right: 0, bottom: '0px', height: '1px', background: '#CCCCCC', width: '100%', marginBottom: '-0.5rem' }} />
             </div>
-            {/* Use Cases Carousel from local images */}
+            {/* Use Cases Carousel from Supabase images */}
             <div style={{ minHeight: '8rem', marginBottom: '0rem' }}>
-              {validImages.length > 0 ? (
+              {supabaseImages.length > 0 ? (
                 <div style={{
                   display: 'flex',
                   overflowX: 'auto',
@@ -911,7 +905,7 @@ export default function MostUsedFontsPage() {
                   scrollbarWidth: 'auto',
                   msOverflowStyle: 'auto',
                 }}>
-                  {validImages.map((img, i) => (
+                  {supabaseImages.map((img, i) => (
                     <div
                       key={i}
                       style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '20rem' }}
@@ -919,13 +913,13 @@ export default function MostUsedFontsPage() {
                       onMouseLeave={() => setHoveredIndex(null)}
                     >
                       <a
-                        href={img.link}
+                        href={img.use_case_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ display: 'block', width: '100%' }}
                       >
                         <img
-                          src={img.src}
+                          src={img.image_url}
                           alt={`${fonts.find(f => f.id === selectedFontId)?.name} use case ${i + 1}`}
                           style={{ width: '240px', height: '180px', objectFit: 'cover', borderRadius: '14px' }}
                         />
@@ -934,21 +928,21 @@ export default function MostUsedFontsPage() {
                         className="nano-heading"
                         style={{
                           fontSize: '10px',
-                          opacity: hoveredIndex === i ? 1 : 0.6,
+                          opacity: hoveredIndex === i ? 1 : 0.5,
                           marginTop: '4px',
                           textAlign: 'left',
                           width: '100%',
                           transition: 'opacity 0.15s',
-                          cursor: 'text',
+                          cursor: 'pointer',
                         }}
                       >
-                        {img.label}
+                        Fonts in Use
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <span style={{ ...nanoHeadingStyle }}>
+                <span style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif' }}>
                   No Uses found for "{fonts.find(f => f.id === selectedFontId)?.name}".
                 </span>
               )}

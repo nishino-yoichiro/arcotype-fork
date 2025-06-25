@@ -4,50 +4,30 @@ import useFontStore from '@/src/store/useFontStore';
 import FontMap from '../src/components/FontMap';
 import { fontConfigs } from '@/src/lib/fontConfig';
 import './styles/typography.css';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { serifPopularOrder, serifNewestOrder, serifAZOrder } from '@/src/data/fontOrders';
 
 export default function Home() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { fonts, selectedFontId, selectFont } = useFontStore();
-  const router = useRouter();
-
-  const popularOrder = [
-    "Playfair Display", "Merriweather", "Lora", "Roboto Serif", "Bitter", "Libre Baskerville", "Linden Hill",
-    "Cormorant", "Cormorant Garamond", "EB Garamond", "Crimson Text", "Sorts Mill Goudy", "Bodoni Moda",
-    "Spectral", "Newsreader", "Bree Serif", "Josefin Slab", "Rokkitt", "Andada Pro", "Aleo", "Crete Round",
-    "Arvo", "Quattrocento", "Coustard", "Imbue", "PT Serif", "Noticia Text", "Zilla Slab", "Ovo",
-    "Alfa Slab One", "Xanh Mono", "Bellefair", "Source Serif", "Headland One", "Instrument Serif",
-    "DM Serif Display", "Abril Fatface", "Chonburi", "Eczar", "Alike Angular", "Alike", "Young Serif",
-    "Oldenburg", "BhuTuka Expanded One", "Montaga", "Kurale", "Gabriela", "Inknut Antiqua", "Special Elite",
-    "Arbutus", "Bigelow Rules", "Mountains of Christmas", "Emilys Candy", "Paprika", "Langar", "Diplomata SC",
-    "Elsie", "Elsie Swash Caps", "Almendra", "Luxurious Roman", "Kotta One", "Diplomata"
-  ];
-
-  const newestOrder = [
-    "Young Serif", "Bodoni Moda", "Newsreader", "Roboto Serif", "Imbue", "Instrument Serif", "Fraunces", "DM Serif Display", "Spectral", "Bellefair", "Headland One", "Coustard", "Chonburi", "BhuTuka Expanded One", "Kurale", "Gabriela", "Inknut Antiqua", "Bigelow Rules", "Mountains of Christmas", "Emilys Candy", "Paprika", "Langar", "Diplomata SC", "Elsie", "Elsie Swash Caps", "Almendra", "Luxurious Roman", "Kotta One", "Diplomata"
-  ];
-
-  const azOrder = [
-    "Abril Fatface", "Aleo", "Alfa Slab One", "Alike", "Alike Angular", "Almendra", "Andada Pro", "Arbutus", "Arvo", "Bellefair", "BhuTuka Expanded One", "Bigelow Rules", "Bitter", "Bodoni Moda", "Bree Serif", "Chonburi", "Cormorant", "Cormorant Garamond", "Coustard", "Courier Prime", "Crete Round", "Crimson Text", "DM Serif Display", "Diplomata", "Diplomata SC", "Domine", "EB Garamond", "Eczar", "Elsie", "Elsie Swash Caps", "Emilys Candy", "Fira Mono", "Fraunces", "Gabriela", "Headland One", "IBM Plex Mono", "IBM Plex Serif", "Imbue", "Inknut Antiqua", "Instrument Serif", "Josefin Slab", "Kotta One", "Kurale", "Langar", "Libre Baskerville", "Linden Hill", "Lora", "Luxurious Roman", "Maiden Orange", "Merriweather", "Montaga", "Mountains of Christmas", "Newsreader", "Noto Sans Mono", "Noto Serif Display", "Noticia Text", "Oldenburg", "Ovo", "Paprika", "Playfair Display", "PT Mono", "PT Serif", "Quattrocento", "Rokkitt", "Roboto Mono", "Roboto Serif", "Rosarivo", "Slabo 27px", "Sorts Mill Goudy", "Source Code Pro", "Source Serif", "Special Elite", "Spectral", "Stint Ultra Condensed", "Suranna", "Ultra", "Young Serif", "Zilla Slab"
-  ];
 
   const [selectedTab, setSelectedTab] = useState('Popular');
 
-  const azFonts = azOrder
+  const azFonts = serifAZOrder
     .map(name => fonts.find(f => f.name === name))
     .filter(Boolean);
 
-  // Add any fonts not in azOrder at the end (just in case)
+  // Add any fonts not in serifAZOrder at the end (just in case)
   const remainingFonts = fonts.filter(
-    f => !azOrder.includes(f.name)
+    f => !serifAZOrder.includes(f.name)
   ).sort((a, b) => a.name.localeCompare(b.name));
 
   const displayedFonts = selectedTab === 'Popular'
-    ? popularOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
+    ? serifPopularOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
     : selectedTab === 'New'
-      ? newestOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
+      ? serifNewestOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
       : selectedTab === 'AZ'
-        ? azOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
+        ? serifAZOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
         : fonts;
 
   const fontRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -192,6 +172,12 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>('Serif');
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
+  // State for hover effect on 'Serif' button
+  const [serifHover, setSerifHover] = useState(false);
+
+  // State for hover effect on 'most used fonts' button
+  const [mostUsedHover, setMostUsedHover] = useState(false);
+
   const categoryIcon = (cat: string | null) => {
     switch (cat) {
       case 'Sans Serif': return '/sans-serif.svg';
@@ -202,6 +188,9 @@ export default function Home() {
       default: return '';
     }
   };
+
+  // Add gridPos and setGridPos state for FontMap panning
+  const [gridPos, setGridPos] = useState<{ x: number; y: number }>({ x: -1030, y: -1440 });
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
@@ -218,6 +207,7 @@ export default function Home() {
           paddingBottom: '10px',
           boxSizing: 'border-box',
           height: '110px', // adjust as needed
+          borderBottom: '1px solid #e5e7eb',
         }}
       />
       {/* Left sidebar - Search Results - 300px fixed width */}
@@ -401,40 +391,42 @@ export default function Home() {
               className={`search-bar-container${searchPopupOpen ? ' expanded' : ''}`}
               style={{ position: 'relative', zIndex: 9999 }}
             >
-              <div className="filter-tag-button">
-                <img
-                  src={selectedCategory === 'Serif' ? '/serif-fill.svg' : categoryIcon(selectedCategory) || ''}
-                  alt={selectedCategory || undefined}
-                  style={{ width: 22, height: 22, objectFit: 'contain', cursor: 'pointer' }}
-                  onClick={() => setSearchPopupOpen(true)}
-                />
-                <span
-                  style={{ fontSize: '10px', fontWeight: 400, cursor: 'pointer' }}
-                  onClick={() => setSearchPopupOpen(true)}
-                >
-                  {selectedCategory}
-                </span>
-                <span className="filter-tag-close">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setSelectedCategory(null);
-                    }}
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      padding: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                    }}
-                    aria-label="Remove category"
+              {selectedCategory && (
+                <div className="filter-tag-button">
+                  <img
+                    src={selectedCategory === 'Serif' ? '/serif-fill.svg' : categoryIcon(selectedCategory) || ''}
+                    alt={selectedCategory || undefined}
+                    style={{ width: 22, height: 22, objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => setSearchPopupOpen(true)}
+                  />
+                  <span
+                    style={{ fontSize: '10px', fontWeight: 400, cursor: 'pointer' }}
+                    onClick={() => setSearchPopupOpen(true)}
                   >
-                    <img src="/black-close-small.svg" alt="Remove" style={{ width: 16, height: 16 }} />
-                  </button>
-                </span>
-              </div>
+                    {selectedCategory}
+                  </span>
+                  <span className="filter-tag-close">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSelectedCategory(null);
+                      }}
+                      style={{
+                        border: 'none',
+                        background: 'none',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                      }}
+                      aria-label="Remove category"
+                    >
+                      <img src="/black-close-small.svg" alt="Remove" style={{ width: 16, height: 16 }} />
+                    </button>
+                  </span>
+                </div>
+              )}
               <input
                 type="text"
                 placeholder="Search..."
@@ -450,6 +442,7 @@ export default function Home() {
                   fontFamily: 'Inter, sans-serif',
                   fontWeight: 400,
                   padding: 0,
+                  paddingLeft: selectedCategory ? 0 : '6px',
                 }}
               />
               {/* Popup */}
@@ -467,7 +460,6 @@ export default function Home() {
                   style={{
                     background: '#EEEFF4',
                     borderRadius: '12px',
-                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
                     padding: '22px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -480,15 +472,41 @@ export default function Home() {
                   <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif', fontSize: 14,}}>Recents</div>
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
                     {['most used fonts', 'logo font', 'minimal font', 'web fonts'].map(recent => (
-                      <button
-                        key={recent}
-                        className="search-category-button-pill"
-                        onClick={() => {
-                          if (recent === 'most used fonts') router.push('/most-used-fonts');
-                        }}
-                      >
-                        <img src="magnifying-glass.svg" style={{ width: 10, height: 10 }} /> {recent}
-                      </button>
+                      recent === 'most used fonts' ? (
+                        <Link key={recent} href="/most-used-fonts">
+                          <button
+                            className="search-category-button-pill"
+                            style={{ position: 'relative' }}
+                            onMouseEnter={() => setMostUsedHover(true)}
+                            onMouseLeave={() => setMostUsedHover(false)}
+                          >
+                            {/* Star overlay */}
+                            <img
+                              src="/red-star.png"
+                              alt="star"
+                              style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                right: '-6px',
+                                width: mostUsedHover ? '21.5px' : '21px',
+                                height: mostUsedHover ? '21.5px' : '21px',
+                                pointerEvents: 'none',
+                                zIndex: 2,
+                                transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                transform: mostUsedHover ? 'rotate(-12deg) scale(1.03)' : 'none',
+                              }}
+                            />
+                            <img src="magnifying-glass.svg" style={{ width: 10, height: 10 }} /> {recent}
+                          </button>
+                        </Link>
+                      ) : (
+                        <button
+                          key={recent}
+                          className="search-category-button-pill"
+                        >
+                          <img src="magnifying-glass.svg" style={{ width: 10, height: 10 }} /> {recent}
+                        </button>
+                      )
                     ))}
                   </div>
                   <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif',fontSize: 14, margin: '0 0 0px 0' }}>Categories</div>
@@ -500,13 +518,42 @@ export default function Home() {
                       { label: 'Script', icon: '/script.svg' },
                       { label: 'Gothic', icon: '/gothic.svg' },
                     ].map(cat => (
-                      <button
-                        key={cat.label}
-                        onClick={() => setSelectedCategory(cat.label)}
-                        className={`search-category-button${selectedCategory === cat.label ? ' selected' : ''}`}
-                      >
-                        <img src={cat.icon} alt={cat.label} style={{ width: 28, height: 28, objectFit: 'contain' }} /> {cat.label}
-                      </button>
+                      cat.label === 'Serif' ? (
+                        <button
+                          key={cat.label}
+                          onClick={() => setSelectedCategory(cat.label)}
+                          className={`search-category-button${selectedCategory === cat.label ? ' selected' : ''}`}
+                          style={{ position: 'relative' }}
+                          onMouseEnter={() => setSerifHover(true)}
+                          onMouseLeave={() => setSerifHover(false)}
+                        >
+                          {/* Star overlay */}
+                          <img
+                            src="/yellow-star.png"
+                            alt="star"
+                            style={{
+                              position: 'absolute',
+                              top: '-9px',
+                              right: '-8px',
+                              width: serifHover ? '26.6px' : '26px',
+                              height: serifHover ? '26.6px' : '26px',
+                              pointerEvents: 'none',
+                              zIndex: 2,
+                              transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                              transform: serifHover ? 'rotate(-10deg) scale(1.03)' : 'none',
+                            }}
+                          />
+                          <img src={cat.icon} alt={cat.label} style={{ width: 28, height: 28, objectFit: 'contain' }} /> {cat.label}
+                        </button>
+                      ) : (
+                        <button
+                          key={cat.label}
+                          onClick={() => setSelectedCategory(cat.label)}
+                          className={`search-category-button${selectedCategory === cat.label ? ' selected' : ''}`}
+                        >
+                          <img src={cat.icon} alt={cat.label} style={{ width: 28, height: 28, objectFit: 'contain' }} /> {cat.label}
+                        </button>
+                      )
                     ))}
                   </div>
                   <div style={{ fontWeight: 400, fontFamily: 'Inter, sans-serif', fontSize: 14, margin: '0 0 0px 0' }}>Vibes</div>
@@ -529,13 +576,76 @@ export default function Home() {
         {/* Font map area */}
         <div style={{ 
           marginTop: '6rem', 
-          height: 'calc(100% - 6rem)'
+          height: 'calc(100% - 6rem)',
+          position: 'relative',
         }}>
+          {/* Pill Buttons Overlay */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}>
+            {/* Top (Minimal) */}
+            <button
+              className="pill-button pill-map-btn"
+              style={{
+                position: 'absolute',
+                top: 16, left: '50%', transform: 'translateX(-50%)',
+                pointerEvents: 'auto',
+              }}
+              onClick={() => setGridPos(pos => ({ ...pos, y: pos.y + 186 }))}
+            >
+              Minimal
+              <img src="/arrow-up.svg" alt="arrow up" style={{ width: 16, height: 16, marginLeft: 0 }} />
+            </button>
+            {/* Right (Wide) */}
+            <button
+              className="pill-button pill-map-btn"
+              style={{
+                position: 'absolute',
+                right: 10, top: '50%', transform: 'translateY(-50%)',
+                pointerEvents: 'auto',
+              }}
+              onClick={() => setGridPos(pos => ({ ...pos, x: pos.x - 266 }))}
+            >
+              Wide
+              <img src="/arrow-right.svg" alt="arrow right" style={{ width: 16, height: 16, marginLeft: 0 }} />
+            </button>
+            {/* Bottom (Decorative) */}
+            <button
+              className="pill-button pill-map-btn"
+              style={{
+                position: 'absolute',
+                bottom: 20, left: '50%', transform: 'translateX(-50%)',
+                pointerEvents: 'auto',
+              }}
+              onClick={() => setGridPos(pos => ({ ...pos, y: pos.y - 186 }))}
+            >
+              Decorative
+              <img src="/arrow-down.svg" alt="arrow down" style={{ width: 16, height: 16, marginLeft: 0 }} />
+            </button>
+            {/* Left (Narrow) */}
+            <button
+              className="pill-button pill-map-btn"
+              style={{
+                position: 'absolute',
+                left: 10, top: '50%', transform: 'translateY(-50%)',
+                pointerEvents: 'auto',
+              }}
+              onClick={() => setGridPos(pos => ({ ...pos, x: pos.x + 266 }))}
+            >
+              Narrow
+              <img src="/arrow-left.svg" alt="arrow left" style={{ width: 16, height: 16, marginLeft: 0 }} />
+            </button>
+          </div>
           <FontMap 
             selectedFontId={selectedFontId}
             onSelectFont={selectFont}
             centeredFontId={selectedFontId}
             testerTextTop={testerTextTop}
+            gridPos={gridPos}
+            setGridPos={setGridPos}
           />
         </div>
       </div>
@@ -545,7 +655,7 @@ export default function Home() {
         style={{
           position: 'fixed',
           right: 30,
-          top: 70,
+          top: 68,
           display: 'flex',
           alignItems: 'center',
           borderBottom: '1px solid #BBBCC0',
@@ -600,6 +710,7 @@ export default function Home() {
           padding: '2rem',
           overflow: 'auto',
           borderRadius: '24px',
+          zIndex: 200,
         }}>
           {/* Top bar: pills left, actions right */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -816,15 +927,15 @@ export default function Home() {
                       className="nano-heading"
                       style={{
                         fontSize: '10px',
-                        opacity: hoveredIndex === i ? 1 : 0.6,
+                        opacity: hoveredIndex === i ? 1 : 0.5,
                         marginTop: '4px',
                         textAlign: 'left',
                         width: '100%',
                         transition: 'opacity 0.15s',
-                        cursor: 'text',
+                        cursor: 'pointer',
                       }}
                     >
-                      {img.label}
+                      Fonts in Use
                     </span>
                   </div>
                 ))}
@@ -837,6 +948,19 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* Logo in top left corner */}
+      <img
+        src="/logo.svg"
+        alt="Logo"
+        style={{
+          position: 'fixed',
+          top: 15,
+          left: 31,
+          width: 40,
+          height: 40,
+          zIndex: 300,
+        }}
+      />
     </div>
   );
 }
