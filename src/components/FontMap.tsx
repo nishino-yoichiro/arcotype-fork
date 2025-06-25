@@ -121,7 +121,7 @@ if (isExtraWide) {
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-    >
+    >  
       {/* Large font name, absolutely positioned 30px from top, centered */}
       <h3
         ref={fontNameRef}
@@ -189,6 +189,8 @@ interface FontMapProps {
   centeredFontId?: string | null;
   testerTextTop?: string;
   fonts?: any[];
+  gridPos: { x: number; y: number };
+  setGridPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
 }
 
 // Custom hook to prevent browser navigation gestures
@@ -217,7 +219,7 @@ function usePreventBrowserNavigation() {
   return ref;
 }
 
-const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centeredFontId, testerTextTop, fonts: customFonts }) => {
+const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centeredFontId, testerTextTop, fonts: customFonts, gridPos, setGridPos }) => {
   const { fonts: storeFonts } = useFontStore();
   const fontList = customFonts || storeFonts;
 
@@ -227,9 +229,6 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
   // Add refs for container and grid
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-
-  // Track grid position
-  const [gridPos, setGridPos] = useState<{ x: number; y: number }>({ x: -870, y: -1050 });
 
   // Helper to clamp gridPos so grid never leaves more than -50px gap (cropped)
   function clampGridPos(x: number, y: number) {
@@ -260,7 +259,6 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
   }
 
   // --- Two-finger panning state ---
-  const lastTouch = useRef<{ x: number; y: number } | null>(null);
   const lastTouches = useRef<{ clientX: number; clientY: number }[]>([]);
   const [isPanning, setIsPanning] = useState(false);
 
