@@ -119,6 +119,8 @@ const FontCard: React.FC<{
   // Combine hover and active state for styling
   const active = hovered || isActive;
 
+  console.log('FontCard', fontName, fontConfigs[fontName]);
+
   return (
     <div
       style={{
@@ -135,7 +137,10 @@ const FontCard: React.FC<{
         cursor: 'pointer',
         overflow: 'hidden',
       }}
-      onClick={onClick}
+      onClick={() => {
+        console.log('Font card clicked', fontName);
+        onClick && onClick();
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -373,7 +378,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -431,7 +439,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -489,7 +500,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -547,7 +561,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -605,7 +622,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -663,7 +683,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -721,7 +744,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -779,7 +805,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -837,7 +866,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -895,7 +927,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -953,7 +988,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
@@ -1011,7 +1049,10 @@ const MostUsedFontMap: React.FC<MostUsedFontMapProps> = ({ selectedFontId, onSel
                 foundry={font?.designer || ''}
                 testerTextTop={testerTextTop}
                 isActive={selectedFontId === font?.id}
-                onClick={font ? () => onSelectFont(font.id) : undefined}
+                onClick={() => {
+                  console.log('Font card clicked', fontName);
+                  onSelectFont(font.id);
+                }}
               />
             </div>
           );
