@@ -6,6 +6,7 @@ import { fontConfigs } from '../src/lib/fontConfig';
 import './styles/typography.css';
 import Link from 'next/link';
 import { serifPopularOrder, serifNewestOrder, serifAZOrder } from '@/src/data/fontOrders';
+import { supabase } from '../src/lib/supabase.js';
 
 export default function Home() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -68,53 +69,32 @@ export default function Home() {
     fontWeight: 400,
   };
 
-  // Remove API fetch logic for use cases and replace with local image detection
-  const imageExts = ['jpeg', 'jpg', 'png', 'webp'];
-  const getFontImages = (fontName: string): string[] => {
-    const safeName = fontName.replace(/ /g, '').toLowerCase();
-    const folderName = fontName;
-    // Try 1, 2, 3 for each extension
-    return [1, 2, 3].map(i =>
-      imageExts.map(ext => `/FontsInUse_Images/${folderName}/${safeName}${i}.${ext}`)
-    ).flat();
-  };
-
-  // For now, all images link to Fonts in Use homepage and have label 'Fonts in Use'.
-  interface UseCaseImage {
-    src: string;
-    link: string;
-    label: string;
-  }
-
-  const [validImages, setValidImages] = useState<UseCaseImage[]>([]);
+  // Add Supabase logic
+  const [supabaseImages, setSupabaseImages] = useState<{ image_url: string; use_case_url: string }[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (!selectedFontId) {
-      setValidImages([]);
+      setSupabaseImages([]);
       return;
     }
     const fontName = fonts.find(f => f.id === selectedFontId)?.name;
     if (!fontName) {
-      setValidImages([]);
+      setSupabaseImages([]);
       return;
     }
-    const candidates = getFontImages(fontName);
-    let found: UseCaseImage[] = [];
-    let checked = 0;
-    candidates.forEach(src => {
-      const img = new window.Image();
-      img.onload = () => {
-        found.push({ src, link: 'https://fontsinuse.com/', label: 'Fonts in Use' });
-        checked++;
-        if (checked === candidates.length) setValidImages(found.slice(0, 3));
-      };
-      img.onerror = () => {
-        checked++;
-        if (checked === candidates.length) setValidImages(found.slice(0, 3));
-      };
-      img.src = src;
-    });
+    supabase
+      .from('font_images')
+      .select('image_url, use_case_url')
+      .eq('font_name', fontName)
+      .limit(3)
+      .then(({ data, error }) => {
+        if (error) {
+          setSupabaseImages([]);
+          return;
+        }
+        setSupabaseImages(data || []);
+      });
   }, [selectedFontId, fonts]);
 
   // Add a style object for the use case label
@@ -859,9 +839,9 @@ export default function Home() {
             </button>
             <div style={{ position: 'absolute', left: 0, right: 0, bottom: '0px', height: '1px', background: '#CCCCCC', width: '100%', marginBottom: '-0.5rem' }} />
           </div>
-          {/* Use Cases Carousel from local images */}
+          {/* Use Cases Carousel from Supabase images */}
           <div style={{ minHeight: '8rem', marginBottom: '0rem' }}>
-            {validImages.length > 0 ? (
+            {supabaseImages.length > 0 ? (
               <div style={{
                 display: 'flex',
                 overflowX: 'auto',
@@ -870,7 +850,7 @@ export default function Home() {
                 scrollbarWidth: 'auto',
                 msOverflowStyle: 'auto',
               }}>
-                {validImages.map((img, i) => (
+                {supabaseImages.map((img, i) => (
                   <div
                     key={i}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '20rem' }}
@@ -878,13 +858,13 @@ export default function Home() {
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
                     <a
-                      href={img.link}
+                      href={img.use_case_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ display: 'block', width: '100%' }}
                     >
                       <img
-                        src={img.src}
+                        src={img.image_url}
                         alt={`${fonts.find(f => f.id === selectedFontId)?.name} use case ${i + 1}`}
                         style={{ width: '240px', height: '180px', objectFit: 'cover', borderRadius: '14px' }}
                       />
@@ -907,7 +887,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <span style={{ ...nanoHeadingStyle }}>
+              <span style={{ fontSize: '10px', fontFamily: 'Inter, sans-serif' }}>
                 No Uses found for "{fonts.find(f => f.id === selectedFontId)?.name}".
               </span>
             )}
