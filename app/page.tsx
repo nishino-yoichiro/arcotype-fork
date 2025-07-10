@@ -2,11 +2,11 @@
 import { useState, useRef, useEffect } from 'react';
 import useFontStore from '@/src/store/useFontStore';
 import FontMap from '../src/components/FontMap';
-import { fontConfigs } from '../src/lib/fontConfig';
+import { fontConfigs } from '../src/lib/localFontConfig';
+import { fontUsageImages } from '@/src/data/fontUsageImages';
 import './styles/typography.css';
 import Link from 'next/link';
 import { serifPopularOrder, serifNewestOrder, serifAZOrder } from '@/src/data/fontOrders';
-import { supabase } from '../src/lib/supabase.js';
 
 export default function Home() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -21,7 +21,11 @@ export default function Home() {
   // Add any fonts not in serifAZOrder at the end (just in case)
   const remainingFonts = fonts.filter(
     f => !serifAZOrder.includes(f.name)
-  ).sort((a, b) => a.name.localeCompare(b.name));
+  ).sort((a, b) => {
+    if (!a.name) return -1;
+    if (!b.name) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   const displayedFonts = selectedTab === 'Popular'
     ? serifPopularOrder.map(name => fonts.find(f => f.name === name)).filter(Boolean)
@@ -69,32 +73,25 @@ export default function Home() {
     fontWeight: 400,
   };
 
-  // Add Supabase logic
-  const [supabaseImages, setSupabaseImages] = useState<{ image_url: string; use_case_url: string }[]>([]);
+  // Use local font usage images
+  const [fontUsageImagesData, setFontUsageImagesData] = useState<{ image_url: string; use_case_url: string }[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  // Load font usage images from local data
   useEffect(() => {
     if (!selectedFontId) {
-      setSupabaseImages([]);
+      setFontUsageImagesData([]);
       return;
     }
     const fontName = fonts.find(f => f.id === selectedFontId)?.name;
     if (!fontName) {
-      setSupabaseImages([]);
+      setFontUsageImagesData([]);
       return;
     }
-    supabase
-      .from('font_images')
-      .select('image_url, use_case_url')
-      .eq('font_name', fontName)
-      .limit(3)
-      .then(({ data, error }) => {
-        if (error) {
-          setSupabaseImages([]);
-          return;
-        }
-        setSupabaseImages(data || []);
-      });
+    
+    // Use local images from fontUsageImages
+    const images = fontUsageImages[fontName as keyof typeof fontUsageImages] || [];
+    setFontUsageImagesData(images);
   }, [selectedFontId, fonts]);
 
   // Add a style object for the use case label
@@ -155,6 +152,16 @@ export default function Home() {
   const [mostUsedHover, setMostUsedHover] = useState(false);
   const [serifHover, setSerifHover] = useState(false);
 
+  if (fonts.length === 0) {
+    return <div>Loading Fonts...</div>;
+  }
+
+  // Helper function to safely access fontConfigs
+  const getFontConfig = (fontName: string | undefined) => {
+    if (!fontName) return undefined;
+    return fontConfigs[fontName as keyof typeof fontConfigs];
+  };
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%' }}>
       {/* Top bar background wrapper */}
@@ -174,6 +181,7 @@ export default function Home() {
         }}
       />
       {/* Left sidebar - Search Results - 300px fixed width */}
+      
       <div
         style={{
           width: '300px',
@@ -230,7 +238,7 @@ export default function Home() {
         }}>
           {displayedFonts.map(font => {
             if (!font) return null;
-            const fontConfig = fontConfigs[font.name];
+            const fontConfig = getFontConfig(font.name);
             const isActive = selectedFontId === font.id;
             const isHovered = hoveredFontId === font.id;
             // Determine if the font name is a single word
@@ -785,7 +793,7 @@ export default function Home() {
               border: 'none',
               outline: 'none',
               marginBottom: '0rem',
-              fontFamily: fontConfigs[selectedFont?.name || '']?.className ? undefined : 'inherit',
+              fontFamily: selectedFont?.name && getFontConfig(selectedFont.name)?.family || 'inherit',
               background: 'transparent',
               transition: 'font-size 0.15s, font-weight 0.15s',
               resize: 'none',
@@ -793,7 +801,7 @@ export default function Home() {
               lineHeight: 1.1,
               padding: 0,
             }}
-            className={fontConfigs[selectedFont?.name || '']?.className}
+            className={selectedFont?.name && getFontConfig(selectedFont.name)?.className}
             onFocus={e => e.target.placeholder = ''}
             onBlur={e => e.target.placeholder = 'Type here...'}
             rows={3}
@@ -839,9 +847,9 @@ export default function Home() {
             </button>
             <div style={{ position: 'absolute', left: 0, right: 0, bottom: '0px', height: '1px', background: '#CCCCCC', width: '100%', marginBottom: '-0.5rem' }} />
           </div>
-          {/* Use Cases Carousel from Supabase images */}
+          {/* Use Cases Carousel from local images */}
           <div style={{ minHeight: '8rem', marginBottom: '0rem' }}>
-            {supabaseImages.length > 0 ? (
+            {fontUsageImagesData.length > 0 ? (
               <div style={{
                 display: 'flex',
                 overflowX: 'auto',
@@ -850,7 +858,7 @@ export default function Home() {
                 scrollbarWidth: 'auto',
                 msOverflowStyle: 'auto',
               }}>
-                {supabaseImages.map((img, i) => (
+                {fontUsageImagesData.map((img, i) => (
                   <div
                     key={i}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '20rem' }}

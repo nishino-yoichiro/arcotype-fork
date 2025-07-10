@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import useFontStore from '../store/useFontStore';
-import { fontConfigs } from '../lib/fontConfig';
+import { fontConfigs } from '../lib/localFontConfig';
 
 interface BlankCardProps {
   style?: React.CSSProperties;
@@ -26,27 +26,32 @@ const BlankCard: React.FC<BlankCardProps> = ({ style }) => {
   );
 };
 
-interface FontCardProps {
+// interface FontCardProps {
+//   fontName: string;
+//   foundry: string;
+//   isSelected: boolean;
+//   onClick: () => void;
+//   testerTextTop?: string;
+// }
+
+const FontCard: React.FC<{
   fontName: string;
   foundry: string;
-  isSelected: boolean;
-  onClick: () => void;
   testerTextTop?: string;
-}
+  isActive?: boolean;
+  onClick?: () => void;
+}> = ({ fontName, foundry, testerTextTop, isActive, onClick }) => {
+  // Add proper type safety when accessing fontConfigs
+  const fontConfig = fontName ? 
+    (fontConfigs as Record<string, {family: string, className: string}>)[fontName] || 
+    {family: `${fontName}, sans-serif`, className: ''}
+  : undefined;
 
-const FontCard: React.FC<FontCardProps> = ({ 
-  fontName, 
-  foundry, 
-  isSelected, 
-  onClick,
-  testerTextTop
-}) => {
-  const fontConfig = fontConfigs[fontName];
   const [hovered, setHovered] = useState(false);
   const fontNameRef = useRef<HTMLHeadingElement>(null);
   const [isTwoLines, setIsTwoLines] = useState(false);
 
-  const isActive = hovered || isSelected;
+  // const isActive = hovered || isSelected;
 
   // Check if the font name wraps to 2 lines
   useEffect(() => {
@@ -60,6 +65,12 @@ const FontCard: React.FC<FontCardProps> = ({
     window.addEventListener('resize', checkLines);
     return () => window.removeEventListener('resize', checkLines);
   }, [fontName]);
+
+  useEffect(() => {
+    if (fontName && !fontConfig) {
+      console.warn(`Font config missing for: ${fontName}`);
+    }
+  }, [fontName, fontConfig]);
 
   // Card padding for left/right only
   const cardPaddingLeft = 30;
@@ -122,6 +133,7 @@ if (isExtraWide) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >  
+    
       {/* Large font name, absolutely positioned 30px from top, centered */}
       <h3
         ref={fontNameRef}
@@ -138,6 +150,7 @@ if (isExtraWide) {
           pointerEvents: 'none',
           wordBreak: 'break-word',
           letterSpacing: letterSpacing,
+          fontFamily: fontConfig?.family || `${fontName}, sans-serif`,
         }}
       >
         {testerTextTop ? testerTextTop : fontName}
@@ -431,7 +444,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -531,7 +544,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -614,7 +627,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -691,7 +704,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -760,7 +773,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -839,7 +852,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -932,7 +945,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1009,7 +1022,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1086,7 +1099,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1179,7 +1192,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1274,7 +1287,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1313,10 +1326,10 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           }}
         >
           <FontCard
-            fontName={diplomataFont.name}
-            foundry={diplomataFont.designer}
-            isSelected={selectedFontId === diplomataFont.id}
-            onClick={() => onSelectFont(diplomataFont.id)}
+            fontName={diplomataFont.name} // Change from font.name to diplomataFont.name
+            foundry={diplomataFont.designer} // Change from font.designer to diplomataFont.designer
+            isActive={selectedFontId === diplomataFont.id} // Change from font.id to diplomataFont.id
+            onClick={() => onSelectFont(diplomataFont.id)} // Change from font.id to diplomataFont.id
             testerTextTop={testerTextTop}
           />
         </div>
@@ -1402,7 +1415,7 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           <FontCard
             fontName={font.name}
             foundry={font.designer}
-            isSelected={selectedFontId === font.id}
+            isActive={selectedFontId === font.id} // Changed to isActive to match component definition
             onClick={() => onSelectFont(font.id)}
             testerTextTop={testerTextTop}
           />
@@ -1442,10 +1455,10 @@ const FontMap: React.FC<FontMapProps> = ({ selectedFontId, onSelectFont, centere
           }}
         >
           <FontCard
-            fontName={diplomataSCFont.name}
-            foundry={diplomataSCFont.designer}
-            isSelected={selectedFontId === diplomataSCFont.id}
-            onClick={() => onSelectFont(diplomataSCFont.id)}
+            fontName={diplomataSCFont.name}         // Changed to use diplomataSCFont
+            foundry={diplomataSCFont.designer}      // Changed to use diplomataSCFont
+            isActive={selectedFontId === diplomataSCFont.id}  // Changed to use diplomataSCFont
+            onClick={() => onSelectFont(diplomataSCFont.id)}  // Changed to use diplomataSCFont
             testerTextTop={testerTextTop}
           />
         </div>

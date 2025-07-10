@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { fontConfigs } from '../lib/fontConfig';
+import { fontConfigs } from '../lib/localFontConfig';
 
 // Custom hook to prevent browser navigation gestures (copied from FontMap.tsx)
 function usePreventBrowserNavigation() {
@@ -70,7 +70,7 @@ const FontCard: React.FC<{
   const cardPaddingLeft = 30;
   const cardPaddingRight = 30;
   const cardPaddingBottom = 32;
-  const fontConfig = fontConfigs[fontName.trim()];
+  const fontConfig = fontName ? (fontConfigs as any)[fontName].trim() : undefined;
   const fontNameRef = useRef<HTMLHeadingElement>(null);
   const [isTwoLines, setIsTwoLines] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -119,7 +119,7 @@ const FontCard: React.FC<{
   // Combine hover and active state for styling
   const active = hovered || isActive;
 
-  console.log('FontCard', fontName, fontConfigs[fontName.trim()]);
+  console.log('FontCard', fontName, fontName ? (fontConfigs as any)[fontName].trim() : undefined);
 
   return (
     <div
